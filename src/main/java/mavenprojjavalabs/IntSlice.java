@@ -2,26 +2,34 @@ package mavenprojjavalabs;
 
 //я не стал самостоятельно придумывать велосипед и решил просто реализовать слайс из golang
 //ссылка на исходный код гошного слайса: https://go.dev/src/runtime/slice.go
-// https://github.com/golang/go/blob/master/src/slices/slices.go отсюда я не все функции буду реализовывать, но думаю что этого будет достаточно
-/**
+
+ /**
  * IntSlice - контейнер, хранит тип int.
  **/
 
 public class IntSlice {
-
+	/**
+	 * Array that keeps elements
+	 */
     private int[] elements;  
+    /**
+     *  Current length of slice
+     */
     private int length;      
     /**
      * Create empty slice
-     * IntSlice() -> []
+     * @return [] (empty IntSlice)
      */
     public IntSlice() {
         this(0, 0);
     }
 
     /**
-     * Create slice with concrete length, all elements are 0.
-     * IntSlice(6) -> [0,0,0,0,0,0]
+     * Create slice with start length to minimize future allocations, all elements are 0.
+     * @param cap start capacity of slice
+     * @throws IllegalArgumentException if input length less than 0
+     * @return IntSlice
+     * @see IntSlice(6) -> [0,0,0,0,0,0]
      */
     public IntSlice(int len) {
         if (len < 0) {
@@ -33,7 +41,11 @@ public class IntSlice {
 
     /**
      * Create a slice with length and capacity. 
-     * IntSlice(6, 9) -> [0,0,0,0,0,0]
+     * @param len start length 
+     * @param cap start capacity
+     * @see IntSlice(6, 9) -> [0,0,0,0,0,0], but can keep 3 more elemnts without growing
+     * @throws IllegalArgumentException if input length or capacity less than 0
+     * @return IntSlice
      */
     public IntSlice(int len, int cap) {
         if (len < 0 || cap < len) {
@@ -45,7 +57,9 @@ public class IntSlice {
 
     /**
      * Create slice from multiple values
-     * IntSlice(2,5,6,3,5,6) -> [2,5,6,3,5,6]
+     * @param values values that must be in slice, order keeping
+     * @return IntSlice
+     * @see IntSlice(2,5,6,3,5,6) -> [2,5,6,3,5,6] 
      */
     public IntSlice(int... values) {
         elements = new int[values.length];
@@ -56,14 +70,14 @@ public class IntSlice {
     
 
     /**
-     * Returns current length of slice(count of elements)
+     * @return int value - current length of slice(count of elements)
      */
     public int len() {
         return length;
     }
 
     /**
-     * Returns current capacity of slice(max count of elements at current moment)
+     * @return int value - current capacity of slice(max count of elements at current moment)
      */
     public int cap() {
         return elements.length;
@@ -71,6 +85,7 @@ public class IntSlice {
 
     /**
      * Appends value to end of slice, grows array if necessary.
+     * @param value - value that should appends to end of slice
      */
     public void append(int value) {
         grow(length + 1);
@@ -79,7 +94,7 @@ public class IntSlice {
 
     /**
      * Appends multiple values to end of slice, keeping order of incoming values.
-     * 
+     * @param values - values that should appends to end of slice
      */
     public void append(int... values) {
         if (values.length == 0) return;
@@ -89,7 +104,9 @@ public class IntSlice {
     }
 
     /**
-     * Returns element by its index
+     * Get element by its index
+     * @param index - index of element from range[0, length-1]
+     * @return int value
      */
     public int get(int index) {
         checkIndex(index);
@@ -98,6 +115,8 @@ public class IntSlice {
 
     /**
      * Sets value by index
+     * @param value - value to set
+     * @param index - where to set
      */
     public void set(int index, int value) {
         checkIndex(index);
@@ -106,7 +125,8 @@ public class IntSlice {
 
     /**
      * Remove element by index
-     * Returns removed element
+     * @param index - index where to remove
+     * @return int value - removed element
      */
     public int remove(int index) {
         checkIndex(index);
@@ -116,13 +136,21 @@ public class IntSlice {
         return removed;
     }
 
+    /**
+     * Checks index
+     * @param index  - input index of element
+     *@throws IndexOutOfBoundsException if index out of slice range
+     */
     private void checkIndex(int index) {
         if (index < 0 || index >= length) {
             throw new IndexOutOfBoundsException(
                 "Index: " + index + ", Length: " + length);
         }
     }
-
+    /**
+     * Grows slice to new minimum capacity
+     * @param minCap - new minimum capacity
+     */
     private void grow(int minCap) {
         if (minCap <= elements.length) {
             return;
@@ -156,7 +184,10 @@ public class IntSlice {
         System.arraycopy(elements, 0, newElements, 0, length);
         elements = newElements;
     }
-
+    /**
+     * Get string representation of slice
+     * @return string value - string like [element1, element2, ... elementN]
+     */
     @Override
     public String toString() {
         if (length == 0) {
@@ -172,6 +203,34 @@ public class IntSlice {
         sb.append("]");
         return sb.toString();
     }
+    /**
+     * Function to check, equal two slices or no
+     * @return boolean value -  true if two slices have same length, elements and their order.
+     */
+	@Override
+	public boolean equals(Object arg0) {
+		if(arg0 != null) {
+			if(arg0 instanceof IntSlice) {
+				boolean r = true;
+				IntSlice s = (IntSlice)arg0;
+				if(this.length == s.length) {
+					for(int i = 0; i < this.length && r; i++) {
+						if(this.elements[i] == s.elements[i]) {
+							r = false;
+						}
+					}
+					return r;
+				}
+			}
+			else {
+				throw new IllegalArgumentException("comparing object must be IntSlice type");
+			}
+			
+		} else {
+			throw new IllegalArgumentException("comparing object cannot be null");
+		}
+		return false; //?линтер сказал надо
+	}
 
     
 }
