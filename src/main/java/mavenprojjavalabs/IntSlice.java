@@ -53,7 +53,7 @@ public class IntSlice {
         length = values.length;
     }
 
-    // ====================== Основные методы ======================
+    
 
     /**
      * Returns current length of slice(count of elements)
@@ -131,7 +131,7 @@ public class IntSlice {
         int oldCap = elements.length;
         int newCap;
 
-        // doublecap с защитой от переполнения
+       
         int doubleCap = (oldCap > Integer.MAX_VALUE / 2) ? Integer.MAX_VALUE : oldCap * 2;
 
         if (minCap > doubleCap) {
@@ -139,7 +139,7 @@ public class IntSlice {
         } else if (oldCap < 1024) {
             newCap = doubleCap;
         } else {
-            // рост на 25% пока не хватит места (точно как в Go)
+            
             newCap = oldCap;
             while (newCap < minCap) {
                 int add = newCap / 4;
@@ -151,7 +151,7 @@ public class IntSlice {
             }
         }
 
-        // создаём новый массив и копируем только актуальные элементы
+        
         int[] newElements = new int[newCap];
         System.arraycopy(elements, 0, newElements, 0, length);
         elements = newElements;
@@ -173,38 +173,5 @@ public class IntSlice {
         return sb.toString();
     }
 
-    // ====================== Пример использования (можно удалить для сдачи) ======================
-    public static void main(String[] args) {
-        System.out.println("=== Тест IntSlice (аналог Go slice) ===");
-
-        IntSlice s = new IntSlice();                    // пустой
-        s.append(10);
-        s.append(20);
-        s.append(30);
-        System.out.println("После добавления: " + s);   // [10, 20, 30]
-
-        System.out.println("len = " + s.len() + ", cap = " + s.cap());
-
-        // добавляем сразу несколько (должен сработать рост)
-        s.append(40, 50, 60, 70, 80, 90, 100);
-        System.out.println("После append 7 элементов: " + s);
-        System.out.println("len = " + s.len() + ", cap = " + s.cap());
-
-        // извлечение
-        System.out.println("Элемент [2] = " + s.get(2));
-
-        // изменение
-        s.set(0, 999);
-        System.out.println("После set(0, 999): " + s);
-
-        // удаление
-        int removed = s.remove(1);
-        System.out.println("Удалён элемент " + removed + ", теперь: " + s);
-        System.out.println("len = " + s.len() + ", cap = " + s.cap());
-
-        // конструктор как make([]int, 5, 10)
-        IntSlice big = new IntSlice(5, 10);
-        big.set(4, 999);
-        System.out.println("make(5,10) после изменения: " + big);
-    }
+    
 }
