@@ -55,19 +55,7 @@ public class IntSlice {
         length = len;
     }
 
-    /**
-     * Create slice from multiple values
-     * @param values values that must be in slice, order keeping
-     * @return IntSlice
-     * @see IntSlice(2,5,6,3,5,6) -> [2,5,6,3,5,6] 
-     */
-    public IntSlice(int... values) {
-        elements = new int[values.length];
-        System.arraycopy(values, 0, elements, 0, values.length);
-        length = values.length;
-    }
-
-    
+        
 
     /**
      * @return int value - current length of slice(count of elements)
@@ -211,15 +199,15 @@ public class IntSlice {
 	public boolean equals(Object arg0) {
 		if(arg0 != null) {
 			if(arg0 instanceof IntSlice) {
-				boolean r = true;
+				boolean result = true;
 				IntSlice s = (IntSlice)arg0;
 				if(this.length == s.length) {
-					for(int i = 0; i < this.length && r; i++) {
-						if(this.elements[i] == s.elements[i]) {
-							r = false;
+					for(int i = 0; i < this.length && result; i++) {
+						if(this.elements[i] != s.elements[i]) {
+							result = false;
 						}
 					}
-					return r;
+					return result;
 				}
 			}
 			else {
